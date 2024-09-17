@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const Listing = require("../Project/models/listing.js");
 const path = require("path");
@@ -7,6 +8,10 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
+const{listeningSchema} = require("./schema.js");
+const { el } = require("@faker-js/faker");
+
+
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wonderlust";
 
@@ -23,14 +28,28 @@ async function main() {
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
 
+
 app.get("/",(req,res)=>{
     res.send("Hii");
 })
+
+const validatelistng = (req, res, next) => {
+    let { error } = listeningSchema.validate(req.body);
+
+    if(error){
+        let errMsg = error.details.map((el) => 
+            el.message).join(", ");
+        throw new ExpressError(400, errMsg);
+    } else {
+        next();
+    }
+};
 
 
 //Index Route
@@ -52,11 +71,11 @@ app.get("/listings/:id", wrapAsync(async(req,res)=>{
 }));
 
 //Create Route
-app.post("/listings", wrapAsync(async (req, res, next)=>
+app.post("/listings",validatelistng,  wrapAsync(async (req, res, next)=>
     {
-        if(!req.body.listing){
-            throw new ExpressError(404, "Send valid data for listing");
-        }
+        // if(!req.body.listing){
+        //     throw new ExpressError(400, "Send valid data for listing");
+        // }
         const newListing = new Listing(req.body.listing);
         await newListing.save();
         res.redirect("/listings");
@@ -71,10 +90,10 @@ app.get("/listings/:id/edit", wrapAsync(async (req,res)=>{
 }));
 
 //Update Route
-app.put("/listings/:id", wrapAsync(async (req,res)=>{
-    if(!req.body.listing){
-        throw new ExpressError(404, "Send valid data for listing");
-    }
+app.put("/listings/:id",validatelistng, wrapAsync(async (req,res)=>{
+    // if(!req.body.listing){
+    //     throw new ExpressError(404, "Send valid data for listing");
+    // }
     let {id} = req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing});
     res.redirect(`/listings/${id}`);
