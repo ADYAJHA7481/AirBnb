@@ -1,9 +1,8 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <h2>All Listing</h2>
-    <!-- <form action="/listings/new" method="get">
-        <button>Create New Listing</button>
-    </form> -->
+<h3>All Listing</h3>
+<!-- <form action="/listings/new" method="get">
+    <button>Create New Listing</button>
+</form> -->
 
 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
     <% for (let listing of allListings) { %>
@@ -22,4 +21,3 @@
         </a>
     <% } %>
 </div>
-</body>
