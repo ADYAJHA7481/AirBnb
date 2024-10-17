@@ -1,6 +1,7 @@
 const mongoose = require("mongoose"); 
 const Schema = mongoose.Schema;
 const Review = require("./review.js");
+// const { ref } = require("joi");
 
 const listeningSchema =  new Schema({
     title :{
@@ -21,7 +22,12 @@ const listeningSchema =  new Schema({
             type: Schema.Types.ObjectId,
             ref: "Review"
         },
-    ]
+    ],
+
+    owner: { 
+        type: Schema.Types.ObjectId,
+        ref: "User",
+    },
 
 });
 
