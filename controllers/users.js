@@ -13,7 +13,7 @@ module.exports.signup = async (req, res) => {
         req.login(registerdUser,(err) => {
             if(err) {
                return next(err);
-            }
+            }    
             req.flash("success", "Welcome to Wonderlust");
         res.redirect("/listings");
         })
