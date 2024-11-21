@@ -11,16 +11,12 @@ const upload = multer({ storage});
 
 router.route("/")
 .get(wrapAsync(listingController.index))
-// .post(isLoggedIn, validatelisting,  wrapAsync(listingController.createListing));
-// .post( upload.single('listing[Image]'), (req, res) => {
-//     res.send(req.file);
-// });
-.post(upload.single('listing[Image]'), (req, res, next) => {
-    if (!req.file) {
-        return next(new Error('File upload failed'));
-    }
-    res.send(req.file);
-});
+.post(
+    isLoggedIn,
+    upload.single('listing[Image]'),
+    validatelisting,
+    wrapAsync(listingController.createListing)
+);
 
 
 //New Route
