@@ -12,7 +12,7 @@ const listeningSchema =  new Schema({
     Image :{
         url: String,
         filename: String,
-        }, 
+    }, 
     price : Number,
     location : String,
     country:  String,
